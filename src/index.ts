@@ -31,3 +31,16 @@ class User {
 
 const user = new User("ahmad", 18);
 console.log(user.addCount());
+
+class Admin extends User {
+  constructor(name: string, age: number) {
+    super(name, age);
+  }
+  public sayHi(): void {
+    console.log(`Hi, I am ${this.name} and I am ${this.age} years old`);
+  }
+}
+
+const admin = new Admin("ali", 20);
+
+admin.sayHi();
