@@ -1,10 +1,13 @@
 {
   "devDependencies": {
     "nodemon": "^2.0.22",
-    "typescript": "^5.1.6",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.6"
   },
   "scripts": {
     "dev": "nodemon --exec ts-node-dev --respawn --transpile-only ./src/index.ts"
+  },
+  "dependencies": {
+    "@total-typescript/ts-reset": "^0.4.2"
   }
 }
