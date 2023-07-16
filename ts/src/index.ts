@@ -144,4 +144,9 @@ console.log(getUserProperty(users, "name"));
 console.log(getUserProperty(users, "email"));
 console.log(getUserProperty(users, "address"));
 
-
+const getCity = <T extends HasID, K extends keyof T>(
+  users: T[],
+  key: K
+): T[K][] => {
+  return users.map((user) => user[key]);
+};

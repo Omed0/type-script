@@ -14,7 +14,10 @@ export default function couter({ setCounter, children }: CounterProps) {
           +
         </button>
         <span>{children}</span>
-        <button className="btn" onClick={() => setCounter((prev) => prev - 1)}>
+        <button
+          className="btn"
+          onClick={() => setCounter((prev) => (prev < 1 ? 0 : prev - 1))}
+        >
           -
         </button>
       </div>

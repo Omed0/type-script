@@ -11,7 +11,7 @@ const List = <T,>({ items, render }: ListProps<T>) => {
       {items.map((item, index) => (
         <li key={index}>
           {render(item)}
-          {"-- "}
+          {item === "🚀 space" ? ":) 👽" : "-->"}
         </li>
       ))}
     </ul>
