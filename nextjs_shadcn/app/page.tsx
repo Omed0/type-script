@@ -1,26 +1,29 @@
-// import Layout from "@/components/layout/Layout";
-// import List from "@/components/List/List";
-// import Counter from "@/components/Counter/Counter";
 // const Post = React.lazy(() => import("@/components/Post/Post") as any);
-import { Button } from "@/components/ui/button";
-
+import Navbar from "@/components/layout/navbar";
 import prisma from "@/lib/prisma";
 
+type user = {
+  id: number;
+  name: string;
+  email: string;
+};
+
 export default async function Home() {
-  const users = await getUsers();
+  const users = (await getUsers()) as user[];
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
-      {/* <Counter counter={counter}>Count is: {counter}</Counter>
-      <hr className="h-1 w-full bg-zinc-600 my-5" />
-      <List
-        items={["🔨 work", "🌏 earth", "🚀 space"]}
-        render={(item: any) => <span className="bold">{item}</span>}
-      />
-      <Layout children={<h1>hello world</h1>} />
-      <section>
-        <Post />
-      </section> */}
+      <Navbar />
+      <h1 className="text-3xl font-bold">Users</h1>
+      {users.map((user, index) => (
+        <div
+          key={index}
+          className="flex gap-5 mt-2 p-2 px-3 bg-zinc-600 w-72 text-white font-semibold"
+        >
+          <h2>{user.name}</h2>
+          <span>{user.email}</span>
+        </div>
+      ))}
     </main>
   );
 }
