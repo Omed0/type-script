@@ -1,11 +1,15 @@
-import { NextAuthOptions } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { type NextAuthOptions } from "next-auth";
 import GithubProvider, { GithubProfile } from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
+import { User } from "@prisma/client";
 
 export const options: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
+  session: {
+    strategy: "jwt",
+  },
+  adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
       profile(profile: GithubProfile) {
@@ -26,53 +30,43 @@ export const options: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        name: {
-          label: "name",
-          type: "text",
-          placeholder: "name...",
-        },
-        password: {
-          label: "Password",
-          type: "password",
-          placeholder: "Password...",
-        },
-        role: {
-          label: "Role",
-          type: "text",
-          placeholder: "Role...",
+        email: {
+          label: "email",
+          type: "email",
+          placeholder: "email...",
         },
       },
-      async authorize(credentials, req) {
-        const { name, password, role } = credentials as any;
+      async authorize(credentials, req): Promise<any> {
+        const { email } = credentials as User;
 
-        const res = await fetch("http://localhost:3000/api/auth/login", {
-          method: "POST",
-          body: JSON.stringify({ name, password, role }),
-          headers: {
-            "Content-Type": "application/json",
+        const user = await prisma.user.findUnique({
+          where: {
+            email,
           },
         });
 
-        const user = await res.json();
-
-        if (res.ok && user) {
-          return user;
-        } else {
-          return null;
-        }
+        if (user) return user;
+        else return null;
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }: any) {
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
+    session: async ({ session, token }: any) => {
+      console.log("Session CallBack", { session, token });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token?.id,
+        },
+      };
     },
-    async session({ session, user }: any) {
-      session.user.role = user.role;
-      return session;
+
+    jwt: async ({ token, user }: any) => {
+      console.log("JWT CallBack", { token, user });
+      if (user) {
+        return { ...token, id: user.id };
+      }
     },
   },
   // pages: {

@@ -1,0 +1,15 @@
+- You need to re-run the prisma generate command after every change that's made to your Prisma schema
+
+* npx prisma generate
+
+- run seed and whats your write in functionality
+
+* npx prisma db seed
+
+- push prisma model to database
+
+* npx prisma db push
+
+- this like a control different version ,you can use when chnage version your application
+
+* npx prisma migrate dev --name init

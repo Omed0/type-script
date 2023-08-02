@@ -1,20 +1,18 @@
 import "../styles/globals.css";
-import NextAuthSessionProvider from "../components/provider/NextAuthSessionProvider";
 import { Metadata } from "next";
 
+// type AppProps = {
+//   children: React.ReactNode;
+//   session: any;
+// };
 type AppProps = {
   children: React.ReactNode;
-  session: any;
 };
 
-export default function RootLayout({ children, session }: AppProps) {
+export default function RootLayout({ children }: AppProps) {
   return (
     <html lang="en">
-      <body>
-        <NextAuthSessionProvider session={session}>
-          {children}
-        </NextAuthSessionProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

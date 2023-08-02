@@ -10,9 +10,9 @@ async function main() {
       id: 1,
       email: "omed@gmail.com",
       name: "Omed",
+      role: "admin",
     },
   });
-  console.log(user);
 }
 
 main()

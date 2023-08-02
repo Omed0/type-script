@@ -1,29 +1,35 @@
-// const Post = React.lazy(() => import("@/components/Post/Post") as any);
 import Navbar from "@/components/layout/navbar";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { options } from "./api/auth/[...nextauth]/options";
 
 type user = {
   id: number;
-  name: string;
+  name?: string;
   email: string;
+  role: string;
 };
 
 export default async function Home() {
   const users = (await getUsers()) as user[];
+  const session = await getServerSession(options);
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <Navbar />
-      <h1 className="text-3xl font-bold">Users</h1>
-      {users.map((user, index) => (
-        <div
-          key={index}
-          className="flex gap-5 mt-2 p-2 px-3 bg-zinc-600 w-72 text-white font-semibold"
-        >
-          <h2>{user.name}</h2>
-          <span>{user.email}</span>
-        </div>
-      ))}
+    <main className="flex min-h-screen flex-col p-8 px-4">
+      <Navbar session={session} />
+      <div className="px-7">
+        <pre>{JSON.stringify(session, null, 2)}</pre>
+        <h1 className="text-3xl font-semibold">Users</h1>
+        {users.map((user, index) => (
+          <div
+            key={index}
+            className="flex gap-5 mt-2 p-2 px-3 bg-zinc-600 w-72 text-white font-semibold"
+          >
+            <h2>{user.name}</h2>
+            <span>{user.email}</span>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
