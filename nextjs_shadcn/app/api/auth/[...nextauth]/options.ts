@@ -9,7 +9,7 @@ export const options: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
   providers: [
     GithubProvider({
       profile(profile: GithubProfile) {
@@ -39,7 +39,7 @@ export const options: NextAuthOptions = {
       async authorize(credentials, req): Promise<any> {
         const { email } = credentials as User;
 
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
             email,
           },
@@ -51,6 +51,13 @@ export const options: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    jwt: async ({ token, user }: any) => {
+      console.log("JWT CallBack", { token, user });
+      if (user) {
+        return { ...token, id: user.id };
+      }
+    },
+
     session: async ({ session, token }: any) => {
       console.log("Session CallBack", { session, token });
       return {
@@ -61,14 +68,8 @@ export const options: NextAuthOptions = {
         },
       };
     },
-
-    jwt: async ({ token, user }: any) => {
-      console.log("JWT CallBack", { token, user });
-      if (user) {
-        return { ...token, id: user.id };
-      }
-    },
   },
+
   // pages: {
   //   signIn: "/login",
   //   signOut: "/auth/signout",

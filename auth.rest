@@ -1,0 +1,11 @@
+# make a request to the API and store the response
+#make a {{url}} for my request
+
+@url = http://localhost:3000/api
+
+GET {{url}}/ HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "omed@gmail.com",
+}

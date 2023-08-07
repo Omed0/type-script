@@ -1,7 +1,6 @@
 import Navbar from "@/components/layout/navbar";
 import prisma from "@/lib/prisma";
-import { getServerSession } from "next-auth";
-import { options } from "./api/auth/[...nextauth]/options";
+import { LoginIsRequiredInServerSide } from "@/lib/Auth";
 
 type user = {
   id: number;
@@ -12,7 +11,7 @@ type user = {
 
 export default async function Home() {
   const users = (await getUsers()) as user[];
-  const session = await getServerSession(options);
+  const session = await LoginIsRequiredInServerSide();
 
   return (
     <main className="flex min-h-screen flex-col p-8 px-4">
