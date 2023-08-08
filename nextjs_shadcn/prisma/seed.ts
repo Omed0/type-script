@@ -7,10 +7,9 @@ async function main() {
     where: { email: "omed@gmail.com" },
     update: {},
     create: {
-      id: 1,
       email: "omed@gmail.com",
       name: "Omed",
-      role: "admin",
+      role: "ADMIN",
     },
   });
 }

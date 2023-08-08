@@ -14,7 +14,7 @@ export async function LoginIsRequiredInServerSide() {
 //auth in client side
 export function LoginIsRequiredInClientSide() {
   if (typeof window !== "undefined") {
-    const session = useSession();
+    const { data: session } = useSession();
     if (!session) redirect("/api/auth/signin");
 
     return session;
