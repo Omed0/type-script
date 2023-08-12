@@ -12,17 +12,6 @@ export const options: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as NextAuthOptions["adapter"],
   providers: [
     GithubProvider({
-      profile(profile: GithubProfile) {
-        return {
-          ...profile,
-          id: profile?.id.toString(),
-          name: profile?.name ?? profile?.login ?? "Name not found",
-          email: profile?.email ?? "example@gmail.com",
-          image:
-            profile?.avatar_url ??
-            "https://avatars.githubusercontent.com/u/7525670?v=4",
-        };
-      },
       clientId: process.env.GITHUB_ID as string,
       clientSecret: process.env.GITHUB_SECRET as string,
     }),
@@ -35,9 +24,17 @@ export const options: NextAuthOptions = {
           type: "email",
           placeholder: "email...",
         },
+        password: {
+          label: "password",
+          type: "password",
+          placeholder: "password...",
+        },
       },
-      async authorize(credentials, req): Promise<any> {
-        const { email } = credentials as User;
+      async authorize(credentials, req): Promise<User | null> {
+        const { email, password } = credentials as {
+          email: string;
+          password: string;
+        };
 
         const user = await prisma.user.findFirst({
           where: {
@@ -45,31 +42,33 @@ export const options: NextAuthOptions = {
           },
         });
 
-        if (user) return user;
+        if (user!) return user;
         else return null;
       },
     }),
   ],
   callbacks: {
-    async session({ session, token }: any) {
-      console.log("Session CallBack", { session, token });
-      if (token) {
-        session.user.id = token.id;
-        session.user.name = token.name;
-        session.user.email = token.email;
-        session.user.image = token.picture;
-      }
+    async session({ session, token, user }) {
+      console.log("Callback session", session, token, user);
       return session;
     },
-
-    async jwt({ token, user }: any) {
-      console.log("JWT CallBack", { token, user });
-      if (user) {
-        return { ...token, id: user.id };
-      }
+    async jwt({ token, user, account, profile }) {
+      console.log("Callback jwt", token, user, account, profile);
+      return token;
     },
   },
-
+  secret: process.env.SECRET,
+  logger: {
+    error(code, ...message) {
+      console.log(code, message);
+    },
+    warn(code, ...message) {
+      console.log(code, message);
+    },
+    debug(code, ...message) {
+      console.log(code, message);
+    },
+  },
   // pages: {
   //   signIn: "/login",
   //   signOut: "/auth/signout",

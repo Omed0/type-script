@@ -1,16 +1,10 @@
 import Navbar from "@/components/layout/navbar";
 import prisma from "@/lib/prisma";
 import { LoginIsRequiredInServerSide } from "@/lib/Auth";
-
-type user = {
-  id: number;
-  name?: string;
-  email: string;
-  role: string;
-};
+import { User } from "next-auth";
 
 export default async function Home() {
-  const users = (await getUsers()) as user[];
+  const users = (await getUsers()) as User[];
   const session = await LoginIsRequiredInServerSide();
 
   return (
@@ -26,6 +20,7 @@ export default async function Home() {
           >
             <h2>{user.name}</h2>
             <span>{user.email}</span>
+            <span>{user.role}</span>
           </div>
         ))}
       </div>
@@ -34,6 +29,15 @@ export default async function Home() {
 }
 
 async function getUsers() {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+    },
+  });
+
   return users;
 }
